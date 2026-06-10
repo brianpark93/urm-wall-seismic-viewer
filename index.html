@@ -21,41 +21,6 @@
   <span id="loading" class="loading" style="display:none">Loading…</span>
 </div>
 
-<div id="trunc-warning" class="trunc-warning" style="display:none">
-  ⚠ This run terminated early (<span id="trunc-tend"></span>s / 30s) — results may be incomplete.
-</div>
-
-<div class="info-bar">
-  <div class="info-item">
-    <span class="info-icon">🧱</span>
-    <div>
-      <strong>Wall (XZ view)</strong>
-      <p>Front face of the L-shaped masonry fence wall (2.8 m wide × 2.2 m tall). Colour = damage level at end of shaking.</p>
-    </div>
-  </div>
-  <div class="info-item">
-    <span class="info-icon">📍</span>
-    <div>
-      <strong>Base bed-joint</strong>
-      <p>Horizontal mortar layer at the very bottom (below the red dashed line). First zone to crack — wall slides here before anything else.</p>
-    </div>
-  </div>
-  <div class="info-item">
-    <span class="info-icon">↗</span>
-    <div>
-      <strong>Diagonal band</strong>
-      <p>Elements along the corner-to-corner crack path (blue dashed lines). Lights up when shear cracking develops through the wall.</p>
-    </div>
-  </div>
-  <div class="info-item">
-    <span class="info-icon">⬜→⬛</span>
-    <div>
-      <strong>Damage 0 → 1</strong>
-      <p>White = intact (elastic). Black = fully failed / fallen out. Greyscale in between = partial cracking.</p>
-    </div>
-  </div>
-</div>
-
 <main>
 
   <!-- Wall panel -->
@@ -74,15 +39,50 @@
     </div>
   </section>
 
-  <!-- Time history panel -->
+  <!-- Time history + info panel -->
   <section class="card chart-card">
     <h3>Mean Damage Time History</h3>
     <div class="chart-wrap">
       <canvas id="history-chart"></canvas>
     </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-icon">🧱</span>
+        <div>
+          <strong>Wall (XZ view)</strong>
+          <p>Front face of the L-shaped masonry fence wall (2.8 m wide × 2.2 m tall). Colour = damage at end of shaking.</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">📍</span>
+        <div>
+          <strong>Base bed-joint</strong>
+          <p>Horizontal mortar at the very bottom (below red dashed line). First zone to crack under earthquake.</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">↗</span>
+        <div>
+          <strong>Diagonal band</strong>
+          <p>Corner-to-corner crack path (between blue dashed lines). Indicates shear failure through the wall.</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">⬜→⬛</span>
+        <div>
+          <strong>Damage 0 → 1</strong>
+          <p>White = intact. Black = fully failed / fallen out. Grey = partial cracking.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
 </main>
+
+<div id="trunc-warning" class="trunc-warning" style="display:none">
+  ⚠ This run terminated early (<span id="trunc-tend"></span>s / 30s) — results may be incomplete.
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="app.js"></script>
