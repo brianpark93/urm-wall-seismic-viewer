@@ -95,7 +95,9 @@ header .subtitle { font-size: 0.78rem; color: #8aabce; }
   border-left: 4px solid #f59e0b;
   color: #7c5a00;
   font-size: 0.82rem;
-  padding: 7px 20px;
+  padding: 7px 12px;
+  margin-top: 10px;
+  border-radius: 4px;
 }
 
 /* ── Main layout ── */
