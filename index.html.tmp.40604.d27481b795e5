@@ -25,37 +25,6 @@
   ⚠ This run terminated early (<span id="trunc-tend"></span>s / 30s) — results may be incomplete.
 </div>
 
-<div class="info-bar">
-  <div class="info-item">
-    <span class="info-icon">🧱</span>
-    <div>
-      <strong>Wall (XZ view)</strong>
-      <p>Front face of the L-shaped masonry fence wall (2.8 m wide × 2.2 m tall). Colour = damage level at end of shaking.</p>
-    </div>
-  </div>
-  <div class="info-item">
-    <span class="info-icon">📍</span>
-    <div>
-      <strong>Base bed-joint</strong>
-      <p>Horizontal mortar layer at the very bottom (below the red dashed line). First zone to crack — wall slides here before anything else.</p>
-    </div>
-  </div>
-  <div class="info-item">
-    <span class="info-icon">↗</span>
-    <div>
-      <strong>Diagonal band</strong>
-      <p>Elements along the corner-to-corner crack path (blue dashed lines). Lights up when shear cracking develops through the wall.</p>
-    </div>
-  </div>
-  <div class="info-item">
-    <span class="info-icon">⬜→⬛</span>
-    <div>
-      <strong>Damage 0 → 1</strong>
-      <p>White = intact (elastic). Black = fully failed / fallen out. Greyscale in between = partial cracking.</p>
-    </div>
-  </div>
-</div>
-
 <main>
 
   <!-- Wall panel -->
