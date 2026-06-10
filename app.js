@@ -11,13 +11,17 @@ const DS_INFO = [
   { label: 'DS3  Diagonal cracking', color: '#E07070' },
 ];
 
+const GRID_STYLE = { color: 'rgba(128,128,128,0.5)', lineWidth: 1, borderDash: [4, 4] };
+const BORDER_STYLE = { color: '#333' };
+
 const AXIS_COMMON = {
   x: {
     type: 'linear',
     min: 0, max: 10,
     title: { display: true, text: 'Time [s]', font: { size: 10 } },
     ticks: { stepSize: 2, font: { size: 9 } },
-    grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1, borderDash: [4, 4] },
+    grid: GRID_STYLE,
+    border: BORDER_STYLE,
   },
 };
 
@@ -174,7 +178,8 @@ function respChartOptions(yLabel) {
       y: {
         title: { display: true, text: yLabel, font: { size: 10 } },
         ticks: { font: { size: 9 } },
-        grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1, borderDash: [4, 4] },
+        grid: GRID_STYLE,
+        border: BORDER_STYLE,
       },
     },
     plugins: {
@@ -287,7 +292,7 @@ function renderHistory(data) {
           borderColor: '#C0392B', borderWidth: 2, borderDash: [3, 3],
           pointRadius: 0, tension: 0.15, fill: false },
         { label: `Threshold (${THR_LINE})`, data: thrData,
-          borderColor: '#bbb', borderWidth: 1, borderDash: [4, 4],
+          borderColor: '#3070d0', borderWidth: 1, borderDash: [4, 4],
           pointRadius: 0, fill: false },
       ],
     },
@@ -305,7 +310,8 @@ function renderHistory(data) {
           min: 0, max: 1.0,
           title: { display: true, text: 'Mean damage', font: { size: 11 } },
           ticks: { stepSize: 0.2, font: { size: 10 } },
-          grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1, borderDash: [4, 4] },
+          grid: GRID_STYLE,
+          border: BORDER_STYLE,
         },
       },
       plugins: {
