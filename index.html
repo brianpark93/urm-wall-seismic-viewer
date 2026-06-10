@@ -39,9 +39,27 @@
     </div>
   </section>
 
-  <!-- Time history + info panel -->
+  <!-- Right panel: response charts + damage time history + info -->
   <section class="card chart-card">
-    <h3>Mean Damage Time History</h3>
+
+    <!-- Top row: drift ratio (left) + BSC (right) -->
+    <div class="resp-row">
+      <div class="resp-wrap">
+        <div class="resp-title">Drift Ratio &theta; [%]</div>
+        <div class="resp-chart-wrap">
+          <canvas id="theta-chart"></canvas>
+        </div>
+      </div>
+      <div class="resp-wrap">
+        <div class="resp-title">Base Shear Coeff. (BSC)</div>
+        <div class="resp-chart-wrap">
+          <canvas id="bsc-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Damage time history -->
+    <h3 class="section-divider">Mean Damage Time History</h3>
     <div class="chart-wrap">
       <canvas id="history-chart"></canvas>
     </div>

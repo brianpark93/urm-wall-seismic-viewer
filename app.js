@@ -11,9 +11,21 @@ const DS_INFO = [
   { label: 'DS3  Diagonal cracking', color: '#E07070' },
 ];
 
+const AXIS_COMMON = {
+  x: {
+    type: 'linear',
+    min: 0, max: 10,
+    title: { display: true, text: 'Time [s]', font: { size: 10 } },
+    ticks: { stepSize: 2, font: { size: 9 } },
+    grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1, borderDash: [4, 4] },
+  },
+};
+
 // ── State ──────────────────────────────────────────────────────────────────
-let geometry = null;
+let geometry  = null;
 let histChart = null;
+let thetaChart = null;
+let bscChart   = null;
 
 // ── Coordinate mapping ─────────────────────────────────────────────────────
 function makeXform(canvas) {
@@ -52,7 +64,6 @@ function renderWall(data) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // element polygons
   geometry.elements.forEach((elem, i) => {
     const d    = data.damage[i];
     const gray = Math.round(255 * (1 - d));
@@ -67,18 +78,13 @@ function renderWall(data) {
   });
 
   const diag = geometry.diagonal;
-
-  // diagonal line
-  strokePolyline(ctx, diag.line, tx, tz, 'rgba(30,100,220,0.80)', 1.6, []);
-  // band edges
+  strokePolyline(ctx, diag.line,     tx, tz, 'rgba(30,100,220,0.80)', 1.6, []);
   strokePolyline(ctx, diag.band_pos, tx, tz, 'rgba(30,100,220,0.40)', 1.0, [5, 4]);
   strokePolyline(ctx, diag.band_neg, tx, tz, 'rgba(30,100,220,0.40)', 1.0, [5, 4]);
-  // base threshold
   const zb = geometry.z_base_thr;
   strokeLine(ctx, X_RANGE[0], zb, X_RANGE[1], zb, tx, tz,
              'rgba(180,60,60,0.65)', 1.0, [4, 4]);
 
-  // axis tick labels
   ctx.fillStyle = '#666';
   ctx.font = '10px sans-serif';
   ctx.textAlign = 'center';
@@ -127,8 +133,8 @@ function renderColorbar() {
   const bx = 18, bw = 16;
 
   const grad = ctx.createLinearGradient(0, top, 0, bot);
-  grad.addColorStop(0, '#000');   // top = damage 1.0 → black
-  grad.addColorStop(1, '#fff');   // bot = damage 0.0 → white
+  grad.addColorStop(0, '#000');
+  grad.addColorStop(1, '#fff');
   ctx.fillStyle = grad;
   ctx.fillRect(bx, top, bw, barH);
   ctx.strokeStyle = '#aaa';
@@ -156,7 +162,101 @@ function renderColorbar() {
   ctx.restore();
 }
 
-// ── Time history chart ─────────────────────────────────────────────────────
+// ── Helper: build Chart.js options for response charts ────────────────────
+function respChartOptions(yLabel) {
+  return {
+    animation: false,
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    scales: {
+      x: { ...AXIS_COMMON.x },
+      y: {
+        title: { display: true, text: yLabel, font: { size: 10 } },
+        ticks: { font: { size: 9 } },
+        grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1, borderDash: [4, 4] },
+      },
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: items => `t = ${parseFloat(items[0].label).toFixed(2)} s`,
+          label: item  => ` ${item.dataset.label}: ${item.parsed.y.toFixed(4)}`,
+        },
+      },
+    },
+  };
+}
+
+// ── Drift ratio and BSC charts ─────────────────────────────────────────────
+function renderResponse(data) {
+  const r = data.response;
+
+  // θ chart
+  const thetaEl = document.getElementById('theta-chart');
+  if (r && r.theta && r.theta.length) {
+    if (thetaChart) {
+      thetaChart.data.labels           = r.t;
+      thetaChart.data.datasets[0].data = r.theta;
+      thetaChart.update('none');
+    } else {
+      thetaChart = new Chart(thetaEl.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: r.t,
+          datasets: [{
+            label: 'θ [%]',
+            data: r.theta,
+            borderColor: '#2a7a3a',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            tension: 0.15,
+            fill: false,
+          }],
+        },
+        options: respChartOptions('θ [%]'),
+      });
+    }
+    thetaEl.closest('.resp-wrap').classList.remove('no-data');
+  } else {
+    if (thetaChart) { thetaChart.data.labels = []; thetaChart.data.datasets[0].data = []; thetaChart.update('none'); }
+    thetaEl.closest('.resp-wrap').classList.add('no-data');
+  }
+
+  // BSC chart
+  const bscEl = document.getElementById('bsc-chart');
+  if (r && r.bsc && r.bsc.length) {
+    if (bscChart) {
+      bscChart.data.labels           = r.t;
+      bscChart.data.datasets[0].data = r.bsc;
+      bscChart.update('none');
+    } else {
+      bscChart = new Chart(bscEl.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: r.t,
+          datasets: [{
+            label: 'BSC',
+            data: r.bsc,
+            borderColor: '#8b4513',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            tension: 0.15,
+            fill: false,
+          }],
+        },
+        options: respChartOptions('BSC'),
+      });
+    }
+    bscEl.closest('.resp-wrap').classList.remove('no-data');
+  } else {
+    if (bscChart) { bscChart.data.labels = []; bscChart.data.datasets[0].data = []; bscChart.update('none'); }
+    bscEl.closest('.resp-wrap').classList.add('no-data');
+  }
+}
+
+// ── Damage time history chart ──────────────────────────────────────────────
 function renderHistory(data) {
   const h = data.history;
   const thrData = h.t.map(() => THR_LINE);
@@ -181,13 +281,13 @@ function renderHistory(data) {
           borderColor: '#333', borderWidth: 2, pointRadius: 0,
           tension: 0.15, fill: false },
         { label: 'Base bed-joint', data: h.base,
-          borderColor: '#E07C00', borderWidth: 2, borderDash: [6,3],
+          borderColor: '#E07C00', borderWidth: 2, borderDash: [6, 3],
           pointRadius: 0, tension: 0.15, fill: false },
         { label: 'In-band',        data: h.inband,
-          borderColor: '#C0392B', borderWidth: 2, borderDash: [3,3],
+          borderColor: '#C0392B', borderWidth: 2, borderDash: [3, 3],
           pointRadius: 0, tension: 0.15, fill: false },
         { label: `Threshold (${THR_LINE})`, data: thrData,
-          borderColor: '#bbb', borderWidth: 1, borderDash: [4,4],
+          borderColor: '#bbb', borderWidth: 1, borderDash: [4, 4],
           pointRadius: 0, fill: false },
       ],
     },
@@ -197,20 +297,15 @@ function renderHistory(data) {
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       scales: {
-        x: {
-          type: 'linear',
-          min: 0, max: 10,
+        x: { ...AXIS_COMMON.x,
           title: { display: true, text: 'Time [s]', font: { size: 11 } },
           ticks: { stepSize: 2, font: { size: 10 } },
-          grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1,
-                  borderDash: [4, 4] },
         },
         y: {
           min: 0, max: 1.0,
           title: { display: true, text: 'Mean damage', font: { size: 11 } },
           ticks: { stepSize: 0.2, font: { size: 10 } },
-          grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1,
-                  borderDash: [4, 4] },
+          grid: { color: 'rgba(0,0,0,0.5)', lineWidth: 1, borderDash: [4, 4] },
         },
       },
       plugins: {
@@ -251,6 +346,7 @@ async function loadPGA(pga) {
   const fname = `data/PGA_${pga.toFixed(2)}g.json`;
   const data  = await fetch(fname).then(r => r.json());
   renderWall(data);
+  renderResponse(data);
   renderHistory(data);
   updateUI(data);
   document.getElementById('loading').style.display = 'none';

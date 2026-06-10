@@ -123,6 +123,11 @@ h3 {
   font-weight: 600;
   margin-bottom: 12px;
 }
+h3.section-divider {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+}
 .hint { font-weight: 400; color: #888; }
 
 /* ── Wall canvas ── */
@@ -161,10 +166,47 @@ h3 {
                    background: repeating-linear-gradient(90deg,#1e64dc 0,#1e64dc 4px,transparent 4px,transparent 8px); }
 .leg-line.base   { background: repeating-linear-gradient(90deg,#b43c3c 0,#b43c3c 3px,transparent 3px,transparent 6px); }
 
-/* ── Time history chart ── */
+/* ── Response charts (top row: drift + BSC) ── */
+.resp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.resp-wrap {
+  min-width: 0;
+  position: relative;
+}
+.resp-wrap.no-data::after {
+  content: 'no node_out.csv';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #aaa;
+  background: #fafafa;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  top: 22px;
+}
+.resp-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+.resp-chart-wrap {
+  position: relative;
+  height: 170px;
+}
+.resp-chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+/* ── Damage time history chart ── */
 .chart-card { min-width: 0; }
 .chart-wrap {
   position: relative;
-  height: 300px;
+  height: 270px;
 }
 #history-chart { width: 100% !important; height: 100% !important; }
