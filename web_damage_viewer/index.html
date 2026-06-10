@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URM Wall — Seismic Damage Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>URM Wall — Seismic Damage Viewer</h1>
+  <p class="subtitle">L-shaped unreinforced masonry · LS-DYNA IDA · CSCM damage parameter</p>
+</header>
+
+<div class="controls">
+  <label for="pga-select">PGA</label>
+  <select id="pga-select"></select>
+  <span id="ds-badge" class="ds-badge">—</span>
+  <span id="stats" class="stats"></span>
+  <span id="loading" class="loading" style="display:none">Loading…</span>
+</div>
+
+<main>
+
+  <!-- Wall panel -->
+  <section class="card wall-card">
+    <h3>Damage Distribution <span class="hint">(XZ projection, long wall)</span></h3>
+    <div class="canvas-row">
+      <canvas id="wall-canvas" width="560" height="480"></canvas>
+      <div class="colorbar-wrap">
+        <canvas id="colorbar-canvas" width="56" height="480"></canvas>
+      </div>
+    </div>
+    <div class="legend-row">
+      <span class="leg-item"><span class="leg-line diag"></span> Diagonal</span>
+      <span class="leg-item"><span class="leg-line band"></span> ±0.2 m band</span>
+      <span class="leg-item"><span class="leg-line base"></span> Base Z threshold</span>
+    </div>
+  </section>
+
+  <!-- Time history panel -->
+  <section class="card chart-card">
+    <h3>Mean Damage Time History</h3>
+    <div class="chart-wrap">
+      <canvas id="history-chart"></canvas>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

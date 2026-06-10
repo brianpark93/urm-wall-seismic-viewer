@@ -1,0 +1,128 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f0f2f5;
+  color: #2c3e50;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  background: #1a2a4a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+header h1 { font-size: 1.25rem; font-weight: 600; white-space: nowrap; }
+header .subtitle { font-size: 0.78rem; color: #8aabce; }
+
+/* ── Controls bar ── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 28px;
+  background: #fff;
+  border-bottom: 1px solid #dde;
+  flex-wrap: wrap;
+}
+.controls label { font-weight: 600; font-size: 0.9rem; }
+.controls select {
+  padding: 5px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fafafa;
+  cursor: pointer;
+}
+.ds-badge {
+  padding: 4px 14px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid rgba(0,0,0,0.12);
+  min-width: 140px;
+  text-align: center;
+  background: #ddd;
+  transition: background 0.25s;
+}
+.stats {
+  font-size: 0.78rem;
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+.loading { font-size: 0.8rem; color: #888; font-style: italic; }
+
+/* ── Main layout ── */
+main {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  padding: 18px 28px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+}
+
+/* ── Cards ── */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+}
+h3 {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.hint { font-weight: 400; color: #888; }
+
+/* ── Wall canvas ── */
+.canvas-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+#wall-canvas {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  background: #fafafa;
+}
+.colorbar-wrap { flex-shrink: 0; }
+#colorbar-canvas {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+}
+
+/* ── Legend ── */
+.legend-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: #666;
+}
+.leg-item { display: flex; align-items: center; gap: 5px; }
+.leg-line {
+  display: inline-block;
+  width: 26px;
+  height: 2px;
+}
+.leg-line.diag   { background: #1e64dc; }
+.leg-line.band   { background: #1e64dc; opacity: 0.45;
+                   background: repeating-linear-gradient(90deg,#1e64dc 0,#1e64dc 4px,transparent 4px,transparent 8px); }
+.leg-line.base   { background: repeating-linear-gradient(90deg,#b43c3c 0,#b43c3c 3px,transparent 3px,transparent 6px); }
+
+/* ── Time history chart ── */
+.chart-card { min-width: 0; }
+.chart-wrap {
+  position: relative;
+  height: 300px;
+}
+#history-chart { width: 100% !important; height: 100% !important; }
