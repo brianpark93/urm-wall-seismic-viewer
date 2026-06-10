@@ -56,37 +56,35 @@ header .subtitle { font-size: 0.78rem; color: #8aabce; }
 }
 .loading { font-size: 0.8rem; color: #888; font-style: italic; }
 
-/* ── Info bar ── */
-.info-bar {
-  display: flex;
-  gap: 0;
-  background: #f8f9fb;
-  border-bottom: 1px solid #dde;
+/* ── Info grid (inside chart card) ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
 }
 .info-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 12px 20px;
-  flex: 1;
-  border-right: 1px solid #e4e6ea;
+  gap: 8px;
 }
-.info-item:last-child { border-right: none; }
 .info-icon {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   line-height: 1;
-  margin-top: 2px;
+  margin-top: 1px;
   flex-shrink: 0;
 }
 .info-item strong {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: #1a2a4a;
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 .info-item p {
-  font-size: 0.75rem;
-  color: #666;
+  font-size: 0.73rem;
+  color: #777;
   line-height: 1.4;
   margin: 0;
 }
