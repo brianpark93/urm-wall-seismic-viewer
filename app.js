@@ -2,8 +2,8 @@
 const THR_BASE   = 0.4;   // DS2: base bed-joint
 const THR_INBAND_DS3 = 0.2;   // DS3: diagonal initiation
 const THR_INBAND_DS4 = 0.4;   // DS4: diagonal propagation
-const LW_COLOR = 'rgb(209,224,243)';   // (0.82, 0.88, 0.95)×255 — long wall intact
-const SW_COLOR = 'rgb(243,224,199)';   // (0.95, 0.88, 0.78)×255 — short wall intact
+const LW_COLOR = 'rgb(255,255,255)';   // long wall intact
+const SW_COLOR = 'rgb(255,255,255)';   // short wall intact
 
 const DS_INFO = [
   { label: 'DS0  No damage',             color: '#D0D0D0' },
