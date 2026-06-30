@@ -161,9 +161,16 @@ h3.section-divider {
   width: 26px;
   height: 2px;
 }
-.leg-line.diag   { background: #1e64dc; }
-.leg-line.band   { background: #1e64dc; opacity: 0.45;
-                   background: repeating-linear-gradient(90deg,#1e64dc 0,#1e64dc 4px,transparent 4px,transparent 8px); }
+.leg-swatch {
+  display: inline-block;
+  width: 14px; height: 10px;
+  border: 1px solid #aaa;
+  border-radius: 2px;
+}
+.leg-swatch.lw { background: rgb(209,224,243); }
+.leg-swatch.sw { background: rgb(243,224,199); }
+.leg-line.diag { background: #cc0000; }
+.leg-line.band { background: repeating-linear-gradient(90deg,#cc0000 0,#cc0000 4px,transparent 4px,transparent 8px); }
 .leg-line.base   { background: repeating-linear-gradient(90deg,#b43c3c 0,#b43c3c 3px,transparent 3px,transparent 6px); }
 
 /* ── Response charts (top row: drift + BSC) ── */

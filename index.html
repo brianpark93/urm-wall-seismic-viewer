@@ -25,17 +25,18 @@
 
   <!-- Wall panel -->
   <section class="card wall-card">
-    <h3>Damage Distribution <span class="hint">(XZ projection, long wall)</span></h3>
+    <h3>Damage Distribution <span class="hint">(az=45° el=25° parallel projection)</span></h3>
     <div class="canvas-row">
-      <canvas id="wall-canvas" width="560" height="480"></canvas>
+      <canvas id="wall-canvas" width="580" height="480"></canvas>
       <div class="colorbar-wrap">
         <canvas id="colorbar-canvas" width="56" height="480"></canvas>
       </div>
     </div>
     <div class="legend-row">
+      <span class="leg-item"><span class="leg-swatch lw"></span> Long wall</span>
+      <span class="leg-item"><span class="leg-swatch sw"></span> Short wall</span>
       <span class="leg-item"><span class="leg-line diag"></span> Diagonal</span>
       <span class="leg-item"><span class="leg-line band"></span> ±0.2 m band</span>
-      <span class="leg-item"><span class="leg-line base"></span> Base Z threshold</span>
     </div>
   </section>
 
@@ -99,7 +100,7 @@
 </main>
 
 <div id="trunc-warning" class="trunc-warning" style="display:none">
-  ⚠ This run terminated early (<span id="trunc-tend"></span>s / 30s) — results may be incomplete.
+  ⚠ This run did not reach t = 10 s (ended at <span id="trunc-tend"></span>s) — snapshot may be incomplete.
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

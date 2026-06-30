@@ -1,17 +1,19 @@
 // ── Constants ──────────────────────────────────────────────────────────────
-const X_RANGE  = [0.0, 2.9];
-const Z_RANGE  = [-0.05, 2.35];
-const PAD      = { l: 38, r: 8, t: 14, b: 34 };
-const THR_LINE = 0.4;
+const THR_BASE   = 0.4;   // DS2: base bed-joint
+const THR_INBAND_DS3 = 0.2;   // DS3: diagonal initiation
+const THR_INBAND_DS4 = 0.4;   // DS4: diagonal propagation
+const LW_COLOR = 'rgb(209,224,243)';   // (0.82, 0.88, 0.95)×255 — long wall intact
+const SW_COLOR = 'rgb(243,224,199)';   // (0.95, 0.88, 0.78)×255 — short wall intact
 
 const DS_INFO = [
-  { label: 'DS0  No damage',        color: '#D0D0D0' },
-  { label: 'DS1  Plastic onset',     color: '#A8D8A8' },
-  { label: 'DS2  Base cracking',     color: '#FFD966' },
-  { label: 'DS3  Diagonal cracking', color: '#E07070' },
+  { label: 'DS0  No damage',             color: '#D0D0D0' },
+  { label: 'DS1  Plastic onset',         color: '#A8D8A8' },
+  { label: 'DS2  Base cracking',         color: '#FFD966' },
+  { label: 'DS3  Diagonal initiation',   color: '#F0A860' },
+  { label: 'DS4  Diagonal propagation',  color: '#E07070' },
 ];
 
-const GRID_STYLE = { color: 'rgba(128,128,128,0.5)', lineWidth: 1, borderDash: [4, 4] };
+const GRID_STYLE  = { color: 'rgba(128,128,128,0.5)', lineWidth: 1, borderDash: [4, 4] };
 const BORDER_STYLE = { color: '#333' };
 
 const AXIS_COMMON = {
@@ -25,28 +27,38 @@ const AXIS_COMMON = {
   },
 };
 
+// Colorbar padding
+const CB_PAD = { t: 14, b: 34 };
+
 // ── State ──────────────────────────────────────────────────────────────────
-let geometry  = null;
-let histChart = null;
+let geometry   = null;
+let histChart  = null;
 let thetaChart = null;
 let bscChart   = null;
 
-// ── Coordinate mapping ─────────────────────────────────────────────────────
+// ── Coordinate mapping (auto-fit to projected bbox) ───────────────────────
 function makeXform(canvas) {
-  const W = canvas.width  - PAD.l - PAD.r;
-  const H = canvas.height - PAD.t - PAD.b;
+  const { xmin, xmax, zmin, zmax } = geometry.bbox;
+  const PAD_PX = 20;
+  const W = canvas.width  - 2 * PAD_PX;
+  const H = canvas.height - 2 * PAD_PX;
+  const sx = W / (xmax - xmin);
+  const sz = H / (zmax - zmin);
+  const s  = Math.min(sx, sz);
+  const ox = PAD_PX + (W - s * (xmax - xmin)) / 2;
+  const oz = PAD_PX + (H - s * (zmax - zmin)) / 2;
   return {
-    tx: x => PAD.l + (x - X_RANGE[0]) / (X_RANGE[1] - X_RANGE[0]) * W,
-    tz: z => PAD.t + H - (z - Z_RANGE[0]) / (Z_RANGE[1] - Z_RANGE[0]) * H,
+    tx: xi => ox + (xmax - xi) * s,   // invert_xaxis: map xmax→left, xmin→right
+    tz: zi => oz + (zmax - zi) * s,   // screen Y increases downward → flip
   };
 }
 
-// ── DS classification ──────────────────────────────────────────────────────
+// ── DS classification (LW elements only) ──────────────────────────────────
 function classifyDS(data) {
   let sLw = 0, sBas = 0, sInb = 0, nLw = 0, nBas = 0, nInb = 0;
   geometry.elements.forEach((e, i) => {
     const d = data.damage[i];
-    sLw += d; nLw++;
+    if (e.wall === 'lw')      { sLw  += d; nLw++;  }
     if (e.group === 'base')   { sBas += d; nBas++; }
     if (e.group === 'inband') { sInb += d; nInb++; }
   });
@@ -54,9 +66,10 @@ function classifyDS(data) {
   const mBas = nBas ? sBas / nBas : 0;
   const mInb = nInb ? sInb / nInb : 0;
   let ds = 0;
-  if (mInb > THR_LINE)       ds = 3;
-  else if (mBas > THR_LINE)  ds = 2;
-  else if (mLw  > 0)         ds = 1;
+  if (mInb > THR_INBAND_DS4)      ds = 4;
+  else if (mInb > THR_INBAND_DS3) ds = 3;
+  else if (mBas > THR_BASE)       ds = 2;
+  else if (mLw  > 0)              ds = 1;
   return { ds, mLw, mBas, mInb };
 }
 
@@ -68,49 +81,35 @@ function renderWall(data) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // elements are pre-sorted back-to-front in geometry.json (painter's algorithm)
   geometry.elements.forEach((elem, i) => {
-    const d    = data.damage[i];
-    const gray = Math.round(255 * (1 - d));
-    ctx.fillStyle = `rgb(${gray},${gray},${gray})`;
+    const d = data.damage[i];
+    if (d < 0.05) {
+      ctx.fillStyle = elem.wall === 'lw' ? LW_COLOR : SW_COLOR;
+    } else {
+      const gray = Math.round(255 * (1 - d));
+      ctx.fillStyle = `rgb(${gray},${gray},${gray})`;
+    }
     ctx.beginPath();
-    elem.poly.forEach(([x, z], j) => {
-      if (j === 0) ctx.moveTo(tx(x), tz(z));
-      else         ctx.lineTo(tx(x), tz(z));
+    elem.poly.forEach(([xi, zi], j) => {
+      if (j === 0) ctx.moveTo(tx(xi), tz(zi));
+      else         ctx.lineTo(tx(xi), tz(zi));
     });
     ctx.closePath();
     ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 0.4;
+    ctx.stroke();
   });
 
   const diag = geometry.diagonal;
-  strokePolyline(ctx, diag.line,     tx, tz, 'rgba(30,100,220,0.80)', 1.6, []);
-  strokePolyline(ctx, diag.band_pos, tx, tz, 'rgba(30,100,220,0.40)', 1.0, [5, 4]);
-  strokePolyline(ctx, diag.band_neg, tx, tz, 'rgba(30,100,220,0.40)', 1.0, [5, 4]);
-  const zb = geometry.z_base_thr;
-  strokeLine(ctx, X_RANGE[0], zb, X_RANGE[1], zb, tx, tz,
-             'rgba(180,60,60,0.65)', 1.0, [4, 4]);
-
-  ctx.fillStyle = '#666';
-  ctx.font = '10px sans-serif';
-  ctx.textAlign = 'center';
-  for (const xv of [0.0, 0.5, 1.0, 1.5, 2.0, 2.5]) {
-    ctx.fillText(xv.toFixed(1), tx(xv), canvas.height - 4);
-  }
-  ctx.textAlign = 'right';
-  for (const zv of [0.0, 0.5, 1.0, 1.5, 2.0]) {
-    ctx.fillText(zv.toFixed(1), PAD.l - 4, tz(zv) + 4);
-  }
-  ctx.textAlign = 'center';
-  ctx.font = '11px sans-serif';
-  ctx.fillStyle = '#444';
-  ctx.fillText('X [m]', canvas.width / 2, canvas.height);
-  ctx.save();
-  ctx.translate(10, canvas.height / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText('Z [m]', 0, 0);
-  ctx.restore();
+  strokePolyline(ctx, diag.line,     tx, tz, 'rgba(200,0,0,0.85)', 1.6, []);
+  strokePolyline(ctx, diag.band_pos, tx, tz, 'rgba(200,0,0,0.50)', 1.0, [5, 4]);
+  strokePolyline(ctx, diag.band_neg, tx, tz, 'rgba(200,0,0,0.50)', 1.0, [5, 4]);
 }
 
 function strokePolyline(ctx, pts, tx, tz, color, width, dash) {
+  if (!pts || pts.length === 0) return;
   ctx.save();
   ctx.strokeStyle = color;
   ctx.lineWidth   = width;
@@ -124,15 +123,11 @@ function strokePolyline(ctx, pts, tx, tz, color, width, dash) {
   ctx.restore();
 }
 
-function strokeLine(ctx, x0, z0, x1, z1, tx, tz, color, width, dash) {
-  strokePolyline(ctx, [[x0,z0],[x1,z1]], tx, tz, color, width, dash);
-}
-
 // ── Colorbar ───────────────────────────────────────────────────────────────
 function renderColorbar() {
   const canvas = document.getElementById('colorbar-canvas');
   const ctx    = canvas.getContext('2d');
-  const top    = PAD.t, bot = canvas.height - PAD.b;
+  const top    = CB_PAD.t, bot = canvas.height - CB_PAD.b;
   const barH   = bot - top;
   const bx = 18, bw = 16;
 
@@ -198,7 +193,6 @@ function respChartOptions(yLabel) {
 function renderResponse(data) {
   const r = data.response;
 
-  // θ chart
   const thetaEl = document.getElementById('theta-chart');
   if (r && r.theta && r.theta.length) {
     if (thetaChart) {
@@ -229,7 +223,6 @@ function renderResponse(data) {
     thetaEl.closest('.resp-wrap').classList.add('no-data');
   }
 
-  // BSC chart
   const bscEl = document.getElementById('bsc-chart');
   if (r && r.bsc && r.bsc.length) {
     if (bscChart) {
@@ -264,14 +257,16 @@ function renderResponse(data) {
 // ── Damage time history chart ──────────────────────────────────────────────
 function renderHistory(data) {
   const h = data.history;
-  const thrData = h.t.map(() => THR_LINE);
+  const thrDs3 = h.t.map(() => THR_INBAND_DS3);
+  const thrDs4 = h.t.map(() => THR_INBAND_DS4);
 
   if (histChart) {
     histChart.data.labels            = h.t;
     histChart.data.datasets[0].data  = h.lw;
     histChart.data.datasets[1].data  = h.base;
     histChart.data.datasets[2].data  = h.inband;
-    histChart.data.datasets[3].data  = thrData;
+    histChart.data.datasets[3].data  = thrDs3;
+    histChart.data.datasets[4].data  = thrDs4;
     histChart.update('none');
     return;
   }
@@ -291,7 +286,10 @@ function renderHistory(data) {
         { label: 'In-band',        data: h.inband,
           borderColor: '#C0392B', borderWidth: 2, borderDash: [3, 3],
           pointRadius: 0, tension: 0.15, fill: false },
-        { label: `Threshold (${THR_LINE})`, data: thrData,
+        { label: `DS3 threshold (${THR_INBAND_DS3})`, data: thrDs3,
+          borderColor: '#3070d0', borderWidth: 1, borderDash: [2, 2],
+          pointRadius: 0, fill: false },
+        { label: `DS2/DS4 threshold (${THR_INBAND_DS4})`, data: thrDs4,
           borderColor: '#3070d0', borderWidth: 1, borderDash: [4, 4],
           pointRadius: 0, fill: false },
       ],
@@ -349,7 +347,7 @@ function updateUI(data) {
 // ── Load & render one PGA ──────────────────────────────────────────────────
 async function loadPGA(pga) {
   document.getElementById('loading').style.display = 'inline';
-  const fname = `data/PGA_${pga.toFixed(2)}g.json`;
+  const fname = `data/PGA_${pga.toFixed(4)}g.json`;
   const data  = await fetch(fname).then(r => r.json());
   renderWall(data);
   renderResponse(data);
@@ -369,7 +367,7 @@ async function init() {
   pga_list.forEach(pga => {
     const opt = document.createElement('option');
     opt.value       = pga;
-    opt.textContent = pga.toFixed(2) + ' g';
+    opt.textContent = parseFloat(pga.toFixed(4)) + ' g';
     sel.appendChild(opt);
   });
   sel.addEventListener('change', e => loadPGA(parseFloat(e.target.value)));
@@ -382,7 +380,7 @@ init().catch(err => {
   console.error(err);
   document.body.innerHTML +=
     `<p style="color:red;padding:20px">
-       Error loading data. Run <code>preprocess.py</code> first, then serve with<br>
+       Error loading data. Run <code>preprocess_ver2.ipynb</code> first, then serve with<br>
        <code>python -m http.server 8000</code> and open <code>localhost:8000</code>.
      </p>`;
 });
