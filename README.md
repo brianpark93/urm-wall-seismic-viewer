@@ -1,35 +1,12 @@
 # URM Wall Seismic Damage Viewer
 
-Interactive web app: select a PGA level → see damage distribution on the wall + mean damage time history.
+Interactive web app for exploring the IDA results of an L-shaped unreinforced
+masonry (URM) fence wall: select a PGA level and see the resulting damage
+distribution on the wall together with the structural response and group-mean
+damage time histories.
 
-## Step 1 — Generate data (run once)
-
-```bash
-cd web_damage_viewer
-python preprocess.py
-```
-
-Reads `../raw_data/PGA_X.XXg/damage_parameter_all.csv` + `messag` for each run.  
-Writes to `data/geometry.json`, `data/pga_list.json`, `data/PGA_X.XXg.json`.
-
-**Requirements:** `numpy`, `pandas`
-
-## Step 2 — View locally
-
-```bash
-python -m http.server 8000
-```
-
-Open [http://localhost:8000](http://localhost:8000) in a browser.
-
-> `file://` does not work — you must serve via HTTP.
-
-## Step 3 — Deploy to GitHub Pages
-
-1. `git init` (if not already a repo)
-2. Commit everything including `data/`
-3. GitHub → Settings → Pages → Source: `main` branch, `/ (root)` or `/web_damage_viewer` subfolder
-4. Access at `https://<user>.github.io/<repo>/web_damage_viewer/`
+Open `index.html` (served over HTTP, e.g. via GitHub Pages) — no build step
+required, the page reads pre-generated data from the `data/` folder.
 
 ## Features
 
@@ -38,6 +15,7 @@ Open [http://localhost:8000](http://localhost:8000) in a browser.
 | Wall canvas | Each hex element polygon coloured by final CSCM damage (white=0, black=1) |
 | Colorbar | Damage scale 0–1 |
 | DS badge | Damage state assigned from group mean damage (DS0–DS4) |
+| Drift ratio / BSC charts | Global structural response over time |
 | Time history | Mean group damage vs. time: All LW / Base bed-joint / In-band (diagonal) |
 
 ## DS Classification
