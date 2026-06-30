@@ -1,7 +1,7 @@
 // ── Constants ──────────────────────────────────────────────────────────────
 const THR_BASE   = 0.4;   // DS2: base bed-joint
-const THR_INBAND_DS3 = 0.2;   // DS3: diagonal initiation
-const THR_INBAND_DS4 = 0.4;   // DS4: diagonal propagation
+const THR_INBAND_DS3 = 0.2;   // DS3: diagonal half
+const THR_INBAND_DS4 = 0.4;   // DS4: diagonal complete (structurally non-functional)
 const LW_COLOR = 'rgb(255,255,255)';   // long wall intact
 const SW_COLOR = 'rgb(255,255,255)';   // short wall intact
 
@@ -9,8 +9,8 @@ const DS_INFO = [
   { label: 'DS0  No damage',             color: '#D0D0D0' },
   { label: 'DS1  Plastic onset',         color: '#A8D8A8' },
   { label: 'DS2  Base cracking',         color: '#FFD966' },
-  { label: 'DS3  Diagonal initiation',   color: '#F0A860' },
-  { label: 'DS4  Diagonal propagation',  color: '#E07070' },
+  { label: 'DS3  Diagonal half',     color: '#F0A860' },
+  { label: 'DS4  Diagonal complete', color: '#E07070' },
 ];
 
 const GRID_STYLE  = { color: 'rgba(128,128,128,0.5)', lineWidth: 1, borderDash: [4, 4] };

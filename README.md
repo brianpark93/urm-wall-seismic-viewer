@@ -22,10 +22,10 @@ required, the page reads pre-generated data from the `data/` folder.
 
 Evaluated hierarchically from DS4 downward, so the highest observable state prevails.
 
-| DS | Condition |
-|----|-----------|
-| DS0 | mean_dmg_LW = 0 |
-| DS1 | mean_dmg_LW > 0 |
-| DS2 | mean_dmg_base > 0.4 |
-| DS3 | mean_dmg_inband > 0.2 |
-| DS4 | mean_dmg_inband > 0.4 |
+| DS | Label | Condition |
+|----|-------|-----------|
+| DS0 | No damage | mean_dmg_LW = 0 |
+| DS1 | Plastic onset | mean_dmg_LW > 0 |
+| DS2 | Base cracking | mean_dmg_base > 0.4 |
+| DS3 | Diagonal half | mean_dmg_inband > 0.2 |
+| DS4 | Diagonal complete (wall no longer structurally functional) | mean_dmg_inband > 0.4 |
