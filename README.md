@@ -37,14 +37,17 @@ Open [http://localhost:8000](http://localhost:8000) in a browser.
 |-------|-------------|
 | Wall canvas | Each hex element polygon coloured by final CSCM damage (white=0, black=1) |
 | Colorbar | Damage scale 0–1 |
-| DS badge | Damage state assigned from group mean damage (DS0–DS3) |
+| DS badge | Damage state assigned from group mean damage (DS0–DS4) |
 | Time history | Mean group damage vs. time: All LW / Base bed-joint / In-band (diagonal) |
 
 ## DS Classification
+
+Evaluated hierarchically from DS4 downward, so the highest observable state prevails.
 
 | DS | Condition |
 |----|-----------|
 | DS0 | mean_dmg_LW = 0 |
 | DS1 | mean_dmg_LW > 0 |
 | DS2 | mean_dmg_base > 0.4 |
-| DS3 | mean_dmg_inband > 0.4 |
+| DS3 | mean_dmg_inband > 0.2 |
+| DS4 | mean_dmg_inband > 0.4 |
