@@ -21,8 +21,8 @@ const AXIS_COMMON = {
   x: {
     type: 'linear',
     min: 0, max: 10,
-    title: { display: true, text: 'Time [s]', font: { size: 10 } },
-    ticks: { stepSize: 2, font: { size: 9 } },
+    title: { display: true, text: 'Time [s]', font: { size: 13 } },
+    ticks: { stepSize: 2, font: { size: 12 } },
     grid: GRID_STYLE,
     border: BORDER_STYLE,
   },
@@ -141,7 +141,7 @@ function renderColorbar() {
   ctx.strokeRect(bx, top, bw, barH);
 
   ctx.fillStyle = '#555';
-  ctx.font = '9px sans-serif';
+  ctx.font = '12px -apple-system, Helvetica, sans-serif';
   ctx.textAlign = 'left';
   [1.0, 0.75, 0.5, 0.25, 0.0].forEach(v => {
     const y = top + (1 - v) * barH;
@@ -156,7 +156,7 @@ function renderColorbar() {
   ctx.translate(10, (top + bot) / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.fillStyle = '#666';
-  ctx.font = '9px sans-serif';
+  ctx.font = '12px -apple-system, Helvetica, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('damage', 0, 0);
   ctx.restore();
@@ -172,8 +172,8 @@ function respChartOptions(yLabel) {
     scales: {
       x: { ...AXIS_COMMON.x },
       y: {
-        title: { display: true, text: yLabel, font: { size: 10 } },
-        ticks: { font: { size: 9 } },
+        title: { display: true, text: yLabel, font: { size: 13 } },
+        ticks: { font: { size: 12 } },
         grid: GRID_STYLE,
         border: BORDER_STYLE,
       },
@@ -302,19 +302,19 @@ function renderHistory(data) {
       interaction: { mode: 'index', intersect: false },
       scales: {
         x: { ...AXIS_COMMON.x,
-          title: { display: true, text: 'Time [s]', font: { size: 11 } },
-          ticks: { stepSize: 2, font: { size: 10 } },
+          title: { display: true, text: 'Time [s]', font: { size: 14 } },
+          ticks: { stepSize: 2, font: { size: 12.5 } },
         },
         y: {
           min: 0, max: 1.0,
-          title: { display: true, text: 'Mean damage', font: { size: 11 } },
-          ticks: { stepSize: 0.2, font: { size: 10 } },
+          title: { display: true, text: 'Mean damage', font: { size: 14 } },
+          ticks: { stepSize: 0.2, font: { size: 12.5 } },
           grid: GRID_STYLE,
           border: BORDER_STYLE,
         },
       },
       plugins: {
-        legend: { position: 'top', labels: { boxWidth: 22, font: { size: 10.5 } } },
+        legend: { position: 'top', labels: { boxWidth: 22, font: { size: 13 } } },
         tooltip: {
           callbacks: {
             title: items => `t = ${parseFloat(items[0].label).toFixed(2)} s`,
@@ -370,8 +370,28 @@ async function init() {
   const slider   = document.getElementById('pga-slider');
   const readout  = document.getElementById('pga-value');
   slider.max = pga_list.length - 1;
-  document.getElementById('pga-min').textContent = pga_list[0].toFixed(2) + ' g';
-  document.getElementById('pga-max').textContent = pga_list[pga_list.length - 1].toFixed(2) + ' g';
+
+  // tick marks: one per available run (the slider is discrete), a taller
+  // tick with a label every 0.10 g. The tick strip is inset by the thumb
+  // radius so the ticks line up with the thumb centre.
+  const ticks  = document.getElementById('slider-ticks');
+  const labels = document.getElementById('slider-labels');
+  const n = pga_list.length;
+  pga_list.forEach((pga, i) => {
+    const left  = (100 * i / (n - 1)) + '%';
+    const major = Math.abs(pga * 10 - Math.round(pga * 10)) < 1e-6;
+    const t = document.createElement('span');
+    t.className = 'tick' + (major ? ' major' : '');
+    t.style.left = left;
+    ticks.appendChild(t);
+    if (major || i === 0 || i === n - 1) {
+      const l = document.createElement('span');
+      l.className = 'tick-label';
+      l.style.left = left;
+      l.textContent = pga.toFixed(2);
+      labels.appendChild(l);
+    }
+  });
 
   let reqId = 0;
   function showIndex(i) {

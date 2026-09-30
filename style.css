@@ -21,6 +21,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   letter-spacing: -0.01em;
+  font-size: 16px;
 }
 
 /* ── Header ── */
@@ -37,8 +38,8 @@ header {
   align-items: baseline;
   gap: 16px;
 }
-header h1 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; }
-header .subtitle { font-size: 0.8rem; color: var(--text-3); }
+header h1 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; }
+header .subtitle { font-size: 0.92rem; color: var(--text-3); }
 
 /* ── Controls bar ── */
 .controls {
@@ -46,7 +47,7 @@ header .subtitle { font-size: 0.8rem; color: var(--text-3); }
   /* fixed columns: readout | slider | status — the status text changes
      length with the numbers, so it gets its own reserved width and the
      slider never moves */
-  grid-template-columns: 170px minmax(260px, 1fr) 440px;
+  grid-template-columns: 190px minmax(320px, 1fr) 500px;
   align-items: center;
   gap: 18px 24px;
   padding: 18px 32px 6px;
@@ -55,23 +56,23 @@ header .subtitle { font-size: 0.8rem; color: var(--text-3); }
   display: flex;
   align-items: baseline;
   gap: 8px;
-  width: 170px;
+  width: 190px;
 }
 .pga-readout .label {
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 .pga-readout .value {
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   font-weight: 600;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   min-width: 3ch;
 }
-.pga-readout .unit { font-size: 0.95rem; color: var(--text-2); font-weight: 500; }
+.pga-readout .unit { font-size: 1.05rem; color: var(--text-2); font-weight: 500; }
 
 /* iOS-style slider */
 .slider-wrap {
@@ -120,29 +121,50 @@ input[type=range].pga-slider::-moz-range-thumb {
   border: 0.5px solid rgba(0, 0, 0, 0.04);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
 }
-.slider-scale {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
+/* discrete tick strip under the track (inset by the 13 px thumb radius) */
+.slider-ticks {
+  position: relative;
+  height: 10px;
+  margin: -6px 13px 0;
+}
+.slider-ticks .tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.22);
+  transform: translateX(-0.5px);
+}
+.slider-ticks .tick.major { height: 10px; width: 1.5px; background: rgba(0, 0, 0, 0.38); }
+.slider-labels {
+  position: relative;
+  height: 16px;
+  margin: 2px 13px 0;
+  font-size: 0.8rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
-  padding: 0 2px;
 }
-.slider-hint { font-size: 0.72rem; color: var(--text-3); }
+.slider-labels .tick-label {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.slider-hint { font-size: 0.82rem; color: var(--text-3); margin-top: 2px; }
 
 .status-wrap {
   display: grid;
-  grid-template-columns: 160px 1fr auto;
+  grid-template-columns: 180px 1fr auto;
   align-items: center;
   gap: 12px;
-  width: 440px;
+  width: 500px;
 }
 .ds-badge {
   padding: 6px 14px;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  width: 160px;
+  width: 180px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -152,12 +174,12 @@ input[type=range].pga-slider::-moz-range-thumb {
   transition: background 0.25s ease;
 }
 .stats {
-  font-size: 0.74rem;
+  font-size: 0.86rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.loading { font-size: 0.74rem; color: var(--text-3); }
+.loading { font-size: 0.86rem; color: var(--text-3); }
 
 /* ── Truncation notice ── */
 .trunc-warning {
@@ -165,7 +187,7 @@ input[type=range].pga-slider::-moz-range-thumb {
   background: #fff7e6;
   border: 1px solid rgba(255, 159, 10, 0.25);
   color: #8a5a00;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   padding: 8px 14px;
   border-radius: 12px;
 }
@@ -192,7 +214,7 @@ main {
   box-shadow: var(--shadow);
 }
 h3 {
-  font-size: 0.86rem;
+  font-size: 1rem;
   color: var(--text-2);
   font-weight: 600;
   margin-bottom: 12px;
@@ -219,7 +241,7 @@ h3.section-divider {
   display: flex;
   gap: 18px;
   margin-top: 10px;
-  font-size: 0.74rem;
+  font-size: 0.88rem;
   color: var(--text-2);
 }
 .leg-item { display: flex; align-items: center; gap: 6px; }
@@ -250,24 +272,24 @@ h3.section-divider {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.74rem;
+  font-size: 0.88rem;
   color: var(--text-3);
   background: #fafafa;
   border: 1px dashed #d2d2d7;
   border-radius: 10px;
 }
 .resp-title {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-2);
   margin-bottom: 6px;
 }
-.resp-chart-wrap { position: relative; height: 170px; }
+.resp-chart-wrap { position: relative; height: 190px; }
 .resp-chart-wrap canvas { width: 100% !important; height: 100% !important; }
 
 /* ── Damage time history chart ── */
 .chart-card { min-width: 0; }
-.chart-wrap { position: relative; height: 270px; }
+.chart-wrap { position: relative; height: 300px; }
 #history-chart { width: 100% !important; height: 100% !important; }
 
 /* ── Info grid ── */
@@ -280,6 +302,6 @@ h3.section-divider {
   border-top: 1px solid var(--hairline);
 }
 .info-item { display: flex; align-items: flex-start; gap: 9px; }
-.info-icon { font-size: 1.05rem; line-height: 1; margin-top: 1px; flex-shrink: 0; }
-.info-item strong { font-size: 0.78rem; color: var(--text); display: block; margin-bottom: 2px; }
-.info-item p { font-size: 0.72rem; color: var(--text-3); line-height: 1.45; }
+.info-icon { font-size: 1.15rem; line-height: 1; margin-top: 1px; flex-shrink: 0; }
+.info-item strong { font-size: 0.92rem; color: var(--text); display: block; margin-bottom: 2px; }
+.info-item p { font-size: 0.86rem; color: var(--text-3); line-height: 1.45; }

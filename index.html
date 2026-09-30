@@ -22,11 +22,9 @@
   <div class="slider-wrap">
     <input type="range" id="pga-slider" class="pga-slider" min="0" max="0" step="1" value="0"
            aria-label="Peak ground acceleration">
-    <div class="slider-scale">
-      <span id="pga-min">—</span>
-      <span class="slider-hint">drag, or use ← → keys</span>
-      <span id="pga-max">—</span>
-    </div>
+    <div id="slider-ticks" class="slider-ticks" aria-hidden="true"></div>
+    <div id="slider-labels" class="slider-labels" aria-hidden="true"></div>
+    <div class="slider-hint">discrete levels: drag to the nearest tick, or use ← → keys</div>
   </div>
   <div class="status-wrap">
     <span id="ds-badge" class="ds-badge">—</span>
@@ -43,7 +41,7 @@
     <div class="canvas-row">
       <canvas id="wall-canvas" width="580" height="480"></canvas>
       <div class="colorbar-wrap">
-        <canvas id="colorbar-canvas" width="56" height="480"></canvas>
+        <canvas id="colorbar-canvas" width="74" height="480"></canvas>
       </div>
     </div>
     <div class="legend-row">
