@@ -43,7 +43,10 @@ header .subtitle { font-size: 0.8rem; color: var(--text-3); }
 /* ── Controls bar ── */
 .controls {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  /* fixed columns: readout | slider | status — the status text changes
+     length with the numbers, so it gets its own reserved width and the
+     slider never moves */
+  grid-template-columns: 170px minmax(260px, 1fr) 440px;
   align-items: center;
   gap: 18px 24px;
   padding: 18px 32px 6px;
@@ -52,7 +55,7 @@ header .subtitle { font-size: 0.8rem; color: var(--text-3); }
   display: flex;
   align-items: baseline;
   gap: 8px;
-  min-width: 150px;
+  width: 170px;
 }
 .pga-readout .label {
   font-size: 0.78rem;
@@ -66,6 +69,7 @@ header .subtitle { font-size: 0.8rem; color: var(--text-3); }
   font-weight: 600;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
+  min-width: 3ch;
 }
 .pga-readout .unit { font-size: 0.95rem; color: var(--text-2); font-weight: 500; }
 
@@ -127,18 +131,21 @@ input[type=range].pga-slider::-moz-range-thumb {
 .slider-hint { font-size: 0.72rem; color: var(--text-3); }
 
 .status-wrap {
-  display: flex;
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
   align-items: center;
   gap: 12px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
+  width: 440px;
 }
 .ds-badge {
   padding: 6px 14px;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
-  min-width: 150px;
+  width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-align: center;
   background: #e8e8ed;
   color: var(--text);
@@ -148,6 +155,7 @@ input[type=range].pga-slider::-moz-range-thumb {
   font-size: 0.74rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .loading { font-size: 0.74rem; color: var(--text-3); }
 
@@ -173,7 +181,7 @@ main {
 @media (max-width: 960px) {
   main { grid-template-columns: 1fr; }
   .controls { grid-template-columns: 1fr; }
-  .status-wrap { justify-content: flex-start; }
+  .status-wrap { width: auto; }
 }
 
 /* ── Cards ── */
