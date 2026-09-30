@@ -14,11 +14,25 @@
 </header>
 
 <div class="controls">
-  <label for="pga-select">PGA</label>
-  <select id="pga-select"></select>
-  <span id="ds-badge" class="ds-badge">—</span>
-  <span id="stats" class="stats"></span>
-  <span id="loading" class="loading" style="display:none">Loading…</span>
+  <div class="pga-readout">
+    <span class="label">PGA</span>
+    <span id="pga-value" class="value">—</span>
+    <span class="unit">g</span>
+  </div>
+  <div class="slider-wrap">
+    <input type="range" id="pga-slider" class="pga-slider" min="0" max="0" step="1" value="0"
+           aria-label="Peak ground acceleration">
+    <div class="slider-scale">
+      <span id="pga-min">—</span>
+      <span class="slider-hint">drag, or use ← → keys</span>
+      <span id="pga-max">—</span>
+    </div>
+  </div>
+  <div class="status-wrap">
+    <span id="ds-badge" class="ds-badge">—</span>
+    <span id="stats" class="stats"></span>
+    <span id="loading" class="loading" style="display:none">Loading…</span>
+  </div>
 </div>
 
 <main>

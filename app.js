@@ -13,8 +13,9 @@ const DS_INFO = [
   { label: 'DS4  Diagonal complete', color: '#E07070' },
 ];
 
-const GRID_STYLE  = { color: 'rgba(128,128,128,0.5)', lineWidth: 1, borderDash: [4, 4] };
-const BORDER_STYLE = { color: '#333' };
+// faint dotted grid, hairline axes (easy on the eye)
+const GRID_STYLE  = { color: 'rgba(0,0,0,0.07)', lineWidth: 1, borderDash: [2, 4], tickColor: 'rgba(0,0,0,0.15)' };
+const BORDER_STYLE = { color: 'rgba(0,0,0,0.25)' };
 
 const AXIS_COMMON = {
   x: {
@@ -345,10 +346,11 @@ function updateUI(data) {
 }
 
 // ── Load & render one PGA ──────────────────────────────────────────────────
-async function loadPGA(pga) {
+async function loadPGA(pga, isCurrent = () => true) {
   document.getElementById('loading').style.display = 'inline';
   const fname = `data/PGA_${pga.toFixed(4)}g.json`;
   const data  = await fetch(fname).then(r => r.json());
+  if (!isCurrent()) return;          // a newer slider position superseded this request
   renderWall(data);
   renderResponse(data);
   renderHistory(data);
@@ -363,17 +365,31 @@ async function init() {
   ]);
   const pga_list = await fetch('data/pga_list.json').then(r => r.json());
 
-  const sel = document.getElementById('pga-select');
-  pga_list.forEach(pga => {
-    const opt = document.createElement('option');
-    opt.value       = pga;
-    opt.textContent = parseFloat(pga.toFixed(4)) + ' g';
-    sel.appendChild(opt);
-  });
-  sel.addEventListener('change', e => loadPGA(parseFloat(e.target.value)));
+  // ── PGA slider: the thumb indexes into pga_list; dragging updates live,
+  //    the latest request always wins so quick drags never show a stale run
+  const slider   = document.getElementById('pga-slider');
+  const readout  = document.getElementById('pga-value');
+  slider.max = pga_list.length - 1;
+  document.getElementById('pga-min').textContent = pga_list[0].toFixed(2) + ' g';
+  document.getElementById('pga-max').textContent = pga_list[pga_list.length - 1].toFixed(2) + ' g';
+
+  let reqId = 0;
+  function showIndex(i) {
+    const pga = pga_list[i];
+    readout.textContent = pga.toFixed(2);
+    slider.style.setProperty('--fill', (100 * i / (pga_list.length - 1)) + '%');
+  }
+  async function selectIndex(i) {
+    showIndex(i);
+    const my = ++reqId;
+    await loadPGA(pga_list[i], () => my === reqId);
+  }
+  slider.addEventListener('input', e => selectIndex(parseInt(e.target.value, 10)));
+  // arrow keys work when the slider has focus; give it focus so they work at once
+  slider.focus();
 
   renderColorbar();
-  await loadPGA(pga_list[0]);
+  await selectIndex(0);
 }
 
 init().catch(err => {

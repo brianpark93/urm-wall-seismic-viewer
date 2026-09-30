@@ -1,7 +1,7 @@
 # URM Wall Seismic Damage Viewer
 
 Interactive web app for exploring the IDA results of an L-shaped unreinforced
-masonry (URM) fence wall: select a PGA level and see the resulting damage
+masonry (URM) fence wall: drag the PGA slider (or use the arrow keys) and see the resulting damage
 distribution on the wall together with the structural response and group-mean
 damage time histories.
 
