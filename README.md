@@ -12,7 +12,7 @@ required, the page reads pre-generated data from the `data/` folder.
 
 | Panel | Description |
 |-------|-------------|
-| Wall canvas | Each hex element polygon coloured by final CSCM damage (white=0, black=1) |
+| Wall canvas | Each hex element polygon colored by final CSCM damage (white=0, black=1) |
 | Colorbar | Damage scale 0–1 |
 | DS badge | Damage state assigned from group mean damage (DS0–DS4) |
 | Drift ratio / BSC charts | Global structural response over time |
